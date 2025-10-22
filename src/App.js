@@ -27,6 +27,15 @@ export default function App() {
   });
   const [input, setInput] = useState("");
   const [filter, setFilter] = useState("all");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
@@ -65,7 +74,7 @@ export default function App() {
     container: {
       background: "linear-gradient(135deg, var(--bg) 0%, var(--card-bg) 100%)",
       minHeight: "100vh",
-      padding: "2rem",
+      padding: isMobile ? "1rem" : "2rem",
       position: "relative",
     },
     overlay: {
@@ -83,14 +92,16 @@ export default function App() {
       maxWidth: "700px",
       margin: "0 auto",
       color: "var(--text)",
+      width: "100%",
+      padding: isMobile ? "0 0.5rem" : "0",
     },
     header: {
       textAlign: "center",
-      marginBottom: "3rem",
+      marginBottom: isMobile ? "2rem" : "3rem",
       position: "relative",
     },
     title: {
-      fontSize: "3rem",
+      fontSize: isMobile ? "2rem" : "3rem",
       fontWeight: "700",
       background: `linear-gradient(135deg, var(--primary) 0%, var(--text) 100%)`,
       WebkitBackgroundClip: "text",
@@ -107,51 +118,55 @@ export default function App() {
     },
     themeToggle: {
       position: "absolute",
-      top: "1rem",
-      right: "1rem",
+      top: "0.5rem",
+      right: "0.5rem",
     },
     addCard: {
       background: "var(--card-bg)",
-      borderRadius: "20px",
-      padding: "2rem",
-      marginBottom: "2rem",
+      borderRadius: isMobile ? "16px" : "20px",
+      padding: isMobile ? "1.5rem" : "2rem",
+      marginBottom: isMobile ? "1.5rem" : "2rem",
       boxShadow: `0 20px 40px rgba(0,0,0,0.1)`,
       border: `1px solid var(--border)`,
       backdropFilter: "blur(10px)",
     },
     inputContainer: {
       display: "flex",
-      gap: "1rem",
+      gap: isMobile ? "0.75rem" : "1rem",
       alignItems: "center",
+      flexDirection: isMobile ? "column" : "row",
     },
     input: {
-      flex: 1,
-      padding: "1rem 1.25rem",
+      flex: isMobile ? "none" : 1,
+      width: isMobile ? "100%" : "auto",
+      padding: isMobile ? "0.875rem 1rem" : "1rem 1.25rem",
       border: "none",
       borderRadius: "12px",
-      fontSize: "1.1rem",
+      fontSize: isMobile ? "1rem" : "1.1rem",
       background: "var(--bg)",
       color: "var(--text)",
       outline: "none",
       boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)",
       transition: "all 0.3s ease",
+      boxSizing: "border-box",
     },
     addButton: {
       background: "var(--primary)",
       color: "white",
       border: "none",
       borderRadius: "12px",
-      padding: "1rem 2rem",
+      padding: isMobile ? "0.875rem 1.5rem" : "1rem 2rem",
       fontSize: "1rem",
       cursor: "pointer",
       fontWeight: "600",
       boxShadow: `0 8px 16px rgba(0,0,0,0.2)`,
       transition: "all 0.3s ease",
       transform: "translateY(0)",
+      width: isMobile ? "100%" : "auto",
     },
     todoList: {
       background: "var(--card-bg)",
-      borderRadius: "20px",
+      borderRadius: "16px",
       overflow: "hidden",
       boxShadow: `0 20px 40px rgba(0,0,0,0.1)`,
       border: `1px solid var(--border)`,
@@ -160,7 +175,7 @@ export default function App() {
     todoItem: {
       display: "flex",
       alignItems: "center",
-      padding: "1.25rem 2rem",
+      padding: "1rem 1.5rem",
       transition: "all 0.3s ease",
       cursor: "pointer",
     },
@@ -172,9 +187,10 @@ export default function App() {
     },
     todoText: {
       flex: 1,
-      fontSize: "1.1rem",
+      fontSize: "1rem",
       fontWeight: "500",
       transition: "all 0.3s ease",
+      wordBreak: "break-word",
     },
     deleteButton: {
       background: "#ef4444",
@@ -189,10 +205,10 @@ export default function App() {
       opacity: 0.8,
     },
     emptyState: {
-      padding: "4rem 2rem",
+      padding: "3rem 1.5rem",
       textAlign: "center",
       opacity: 0.6,
-      fontSize: "1.2rem",
+      fontSize: "1rem",
     },
   };
 
@@ -208,7 +224,7 @@ export default function App() {
               labels={{ light: "Light", dark: "Dark" }}
             />
           </div>
-          <div style={{ fontSize: "4rem", marginBottom: "0.5rem" }}>✨</div>
+          <div style={{ fontSize: isMobile ? "3rem" : "4rem", marginBottom: "0.5rem" }}>✨</div>
           <h1 style={premiumStyles.title}>TaskFlow Pro</h1>
           <p style={premiumStyles.subtitle}>Organize your life with style</p>
         </header>
@@ -221,7 +237,7 @@ export default function App() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && addTodo()}
-              placeholder="What amazing thing will you accomplish today?"
+              placeholder={isMobile ? "Add a new task..." : "What amazing thing will you accomplish today?"}
               style={premiumStyles.input}
             />
             <button
@@ -244,9 +260,9 @@ export default function App() {
         {/* Premium Stats Dashboard */}
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: "1.5rem",
-          marginBottom: "2rem",
+          gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: isMobile ? "1rem" : "1.5rem",
+          marginBottom: isMobile ? "1.5rem" : "2rem",
         }}>
           {[
             { icon: "📊", value: todos.length, label: "Total Tasks", color: "var(--primary)" },
@@ -258,8 +274,8 @@ export default function App() {
               key={index}
               style={{
                 background: "var(--card-bg)",
-                padding: "1.5rem",
-                borderRadius: "16px",
+                padding: isMobile ? "1rem" : "1.5rem",
+                borderRadius: isMobile ? "12px" : "16px",
                 textAlign: "center",
                 border: `1px solid var(--border)`,
                 boxShadow: `0 8px 20px rgba(0,0,0,0.1)`,
@@ -286,18 +302,18 @@ export default function App() {
                 height: "3px",
                 background: `linear-gradient(90deg, ${stat.color}, ${stat.color}80)`,
               }} />
-              <div style={{ fontSize: "2.5rem", marginBottom: "0.5rem" }}>
+              <div style={{ fontSize: isMobile ? "1.8rem" : "2.5rem", marginBottom: "0.25rem" }}>
                 {stat.icon}
               </div>
               <div style={{
-                fontSize: "2rem",
+                fontSize: isMobile ? "1.5rem" : "2rem",
                 fontWeight: "700",
                 color: stat.color,
                 marginBottom: "0.25rem",
               }}>
                 {stat.value}
               </div>
-              <div style={{ fontSize: "0.9rem", opacity: 0.7, fontWeight: "500" }}>
+              <div style={{ fontSize: isMobile ? "0.8rem" : "0.9rem", opacity: 0.7, fontWeight: "500" }}>
                 {stat.label}
               </div>
             </div>
@@ -307,15 +323,16 @@ export default function App() {
         {/* Filter Tabs */}
         <div style={{
           display: "flex",
-          gap: "0.5rem",
-          marginBottom: "2rem",
+          gap: isMobile ? "0.25rem" : "0.5rem",
+          marginBottom: isMobile ? "1.5rem" : "2rem",
           justifyContent: "center",
           background: "var(--card-bg)",
           padding: "0.5rem",
-          borderRadius: "16px",
+          borderRadius: isMobile ? "12px" : "16px",
           border: `1px solid var(--border)`,
           backdropFilter: "blur(10px)",
           boxShadow: `0 8px 20px rgba(0,0,0,0.1)`,
+          flexWrap: "wrap",
         }}>
           {[
             { key: "all", label: "All Tasks", icon: "📋" },
@@ -326,19 +343,21 @@ export default function App() {
               key={filterOption.key}
               onClick={() => setFilter(filterOption.key)}
               style={{
-                padding: "0.75rem 1.5rem",
+                padding: isMobile ? "0.5rem 1rem" : "0.75rem 1.5rem",
                 border: "none",
                 background: filter === filterOption.key ? "var(--primary)" : "transparent",
                 color: filter === filterOption.key ? "white" : "var(--text)",
-                borderRadius: "12px",
+                borderRadius: isMobile ? "8px" : "12px",
                 cursor: "pointer",
-                fontSize: "0.9rem",
+                fontSize: isMobile ? "0.8rem" : "0.9rem",
                 fontWeight: "600",
                 transition: "all 0.3s ease",
                 display: "flex",
                 alignItems: "center",
-                gap: "0.5rem",
+                gap: isMobile ? "0.25rem" : "0.5rem",
                 boxShadow: filter === filterOption.key ? `0 4px 12px rgba(0,0,0,0.2)` : "none",
+                flex: isMobile ? "1" : "none",
+                justifyContent: "center",
               }}
             >
               <span>{filterOption.icon}</span>
@@ -350,10 +369,10 @@ export default function App() {
         <div style={premiumStyles.todoList}>
           {filteredTodos.length === 0 ? (
             <div style={premiumStyles.emptyState}>
-              <div style={{ fontSize: "5rem", marginBottom: "1rem", filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))" }}>
+              <div style={{ fontSize: "3.5rem", marginBottom: "1rem", filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.1))" }}>
                 {todos.length === 0 ? "🎯" : filter === "active" ? "⚡" : filter === "completed" ? "🎉" : "📋"}
               </div>
-              <div style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+              <div style={{ fontSize: "1.2rem", fontWeight: "600", marginBottom: "0.5rem" }}>
                 {todos.length === 0 
                   ? "Ready to conquer your day?" 
                   : filter === "active" 
@@ -362,7 +381,7 @@ export default function App() {
                       ? "No completed tasks yet!" 
                       : "No tasks found!"}
               </div>
-              <div style={{ fontSize: "1rem", opacity: 0.8 }}>
+              <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>
                 {todos.length === 0 
                   ? "Add your first task above to get started!" 
                   : filter === "active" 
@@ -465,16 +484,16 @@ export default function App() {
         {/* Premium Footer */}
         <div style={{
           textAlign: "center",
-          marginTop: "3rem",
-          padding: "2rem",
+          marginTop: isMobile ? "2rem" : "3rem",
+          padding: isMobile ? "1.5rem" : "2rem",
           background: "var(--card-bg)",
-          borderRadius: "16px",
+          borderRadius: isMobile ? "12px" : "16px",
           border: `1px solid var(--border)`,
           backdropFilter: "blur(10px)",
           boxShadow: `0 8px 20px rgba(0,0,0,0.1)`,
         }}>
-          <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>✨</div>
-          <p style={{ margin: 0, opacity: 0.7, fontSize: "0.9rem" }}>
+          <div style={{ fontSize: "1.2rem", marginBottom: "0.5rem" }}>✨</div>
+          <p style={{ margin: 0, opacity: 0.7, fontSize: "0.8rem" }}>
             Made with ❤️ • TaskFlow Pro v2.0 • Premium Edition
           </p>
         </div>
